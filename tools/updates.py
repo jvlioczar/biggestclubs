@@ -23,3 +23,12 @@ UPDATES = {
     "be": {"Club Brugge": dict(n=20, k=12), "Union SG": dict(n=12, k=4)},
     "rs": {"Red Star Belgrade": dict(n=37, k=30)},
 }
+
+# Brazilian supporters, same figures as data/meta.js in Lendas do Futebol Brasileiro: (Ipsos-Ipec, AtlasIntel).
+# Clubs missing from those 2025 surveys have no number.
+FANS_BR = {
+    "Corinthians": (11.9, 13.9), "Palmeiras": (6.5, 7.8), "Santos": (2.0, 3.1), "São Paulo": (6.4, 10.1), "Flamengo": (21.2, 20.6),
+    "Fluminense": (0.9, 2.6), "Botafogo": (1.5, 3.6), "Vasco da Gama": (3.4, 6.0), "Cruzeiro": (2.3, 6.0), "Atlético Mineiro": (2.3, 3.6),
+    "Grêmio": (3.0, 4.6), "Internacional": (1.7, 3.3), "Bahia": (2.2, 2.4), "Vitória": (0.8, 1.7), "Sport": (1.3, 2.4),
+    "Fortaleza": (0.7, 1.0), "Athletico Paranaense": (0.5, None),
+}

@@ -190,6 +190,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 a.sub:hover { color: var(--primary); }
 .sub .fi { font-size: 11px; margin-right: 5px; }
 .rank-t .num { width: 78px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.fan2 span { display: block; font-size: 12px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+.fan2 b { color: var(--ink); font-size: 14px; }
 .rank-t td.tot { font: 800 17px var(--head); }
 .z { color: var(--muted); }
 .tier { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 4px 9px; border-radius: 999px; color: #fff; background: var(--tc); white-space: nowrap; }
@@ -283,8 +285,9 @@ a.sub:hover { color: var(--primary); }
   .rank-t td.num { grid-row: 2; width: auto; display: flex; flex-direction: column-reverse; justify-content: flex-end; font-size: 15px; margin-top: 8px; text-align: left; }
   .rank-t td.num::before { content: attr(data-l); font: 600 10.5px/1.15 var(--body); color: var(--muted); margin-top: 2px; hyphens: manual; }
   .rank-t tr { grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: 5px; }
-  .rank-t td.fan { grid-row: 3; grid-column: 1 / -1; flex-direction: row-reverse; justify-content: flex-end; align-items: baseline; gap: 6px; font-size: 14px; }
+  .rank-t td.fan { grid-row: 3; grid-column: 1 / -1; flex-direction: row; justify-content: flex-start; align-items: baseline; gap: 6px; font-size: 14px; }
   .rank-t td.fan::before { font-size: 12px; margin: 0; }
+  .fan2 { display: flex; flex-wrap: wrap; gap: 2px 10px; }
   .rank-t .pos { grid-column: 1; grid-row: 1; }
   .rank-t td.club { grid-column: 1 / -1; grid-row: 1; padding: 0 92px 0 32px; }
   .rank-t .tc { grid-column: 1 / -1; grid-row: 1; align-self: start; }

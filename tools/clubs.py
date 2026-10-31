@@ -1,7 +1,7 @@
 """Loads the source sheets, merges split entries, applies corrections and computes tiers."""
 import csv, re, unicodedata
 from pathlib import Path
-from updates import UPDATES
+from updates import UPDATES, FANS_BR
 
 SHEETS = Path(__file__).parent / "sheets"
 TIERS = ["goat", "lenda", "estrela", "coadjuvante", "existe"]
@@ -109,6 +109,10 @@ def load():
             for field, val in vals.items():
                 report.append(f"update {ct['id']}: {name}.{field} {by[name][field]} -> {val}")
                 by[name][field] = val
+        if ct["id"] == "br":
+            for c in by.values():
+                c["fans"] = FANS_BR.get(c["name"])
+                c["fan"] = c["fans"][0] if c["fans"] else 0
         for c in by.values():
             c["tier"] = tier_of(c)
             c["total"] = sum(c[k] for k in FIELDS)

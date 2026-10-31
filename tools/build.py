@@ -6,7 +6,7 @@ from clubs import load, slug, TIERS, FIELDS
 
 ROOT = Path(__file__).parent.parent
 SITE = "https://biggestclubs.biblioverse.org/"
-VER = "2026-10-31-r5"
+VER = "2026-10-31-r7"
 UPDATED = "2026-10-31"
 COUNTRIES, CLUBS, _ = load()
 
@@ -28,7 +28,7 @@ T = {
         col_rank="Pos.", col_club="Clube", col_ct="País", col_tier="Nível", col_m="Mundial", col_c="Continental", col_l="Cont. menor", col_n="Liga", col_k="Copa", col_total="Total", col_fan="Torcida",
         count_one="clube", count_many="clubes", more="Mostrar todos", reset="Limpar filtros", empty="Nenhum clube encontrado. Tente outro nome ou limpe os filtros.",
         world_pos="no mundo", refs="Referências", back="Todos os países", prev="Anterior", next="Próximo",
-        fan_note="Torcida: percentual estimado de torcedores no país, quando disponível.",
+        fan_note="Torcida: percentual estimado de torcedores no país, quando disponível.", fan_note_br="Torcida: percentual dos brasileiros que torcem para o clube nas pesquisas Ipsos-Ipec / O Globo (junho de 2025) e AtlasIntel / ge (2025). Clubes fora dessas pesquisas ficam sem número.",
         crit_title="Critérios", crit_page="Critérios do ranking", sort="Ordenar", crit_lead="Cada clube recebe um nível apenas pelos títulos que conquistou. Não há voto nem nota subjetiva.", crit_tiers="Os cinco níveis", crit_tie_h="Como funciona o desempate", crit_tie="Dentro de cada nível, vence quem tem mais títulos na ordem: Mundial, continental, continental menor, liga nacional e copa nacional.",
         crit_notes_h="Como ler os dados",
         crit_notes=["Cada continente usa suas próprias competições. Nos clubes sauditas, o principal título continental soma a Liga dos Campeões da AFC e a Liga dos Campeões Árabe, no mesmo nível de uma Libertadores ou de uma Liga dos Campeões da UEFA. Por isso o ranking mede o domínio em cada região, sem comparar a força das competições.", "Em \"Mundial\" entram os títulos mundiais de clubes reconhecidos nas referências do projeto, incluindo os da antiga Copa Intercontinental.", "Clubes que apareciam duas vezes, na lista da liga e na da copa, foram unificados e tiveram o nível recalculado.", "As contagens foram atualizadas em 31 de outubro de 2026 com as listas de campeões da Wikipedia. Só contam os troféus já registrados nessas listas."],
@@ -55,7 +55,7 @@ T = {
         col_rank="Rank", col_club="Club", col_ct="Country", col_tier="Tier", col_m="World", col_c="Continental", col_l="2nd cont.", col_n="League", col_k="Cup", col_total="Total", col_fan="Fans",
         count_one="club", count_many="clubs", more="Show all", reset="Clear filters", empty="No clubs found. Try another name or clear the filters.",
         world_pos="in the world", refs="References", back="All countries", prev="Previous", next="Next",
-        fan_note="Fans: estimated share of supporters in the country, where available.",
+        fan_note="Fans: estimated share of supporters in the country, where available.", fan_note_br="Fans: share of Brazilians who support the club in the Ipsos-Ipec / O Globo (June 2025) and AtlasIntel / ge (2025) surveys. Clubs outside those surveys have no number.",
         crit_title="Criteria", crit_page="Ranking criteria", sort="Sort by", crit_lead="Each club gets a tier purely from the titles it has won. There are no votes or subjective scores.", crit_tiers="The five tiers", crit_tie_h="How ties are broken", crit_tie="Within each tier, the club with more titles comes first, in this order: world, continental, second-tier continental, national league and national cup.",
         crit_notes_h="How to read the data",
         crit_notes=["Each continent uses its own competitions. For Saudi clubs, the top continental count adds the AFC Champions League and the Arab Club Champions Cup, at the same level as a Libertadores or a UEFA Champions League, so the ranking measures dominance in each region without comparing the strength of the competitions.", "\"World\" covers the club world titles recognised in the project's references, including the former Intercontinental Cup.", "Clubs listed twice, once for the league and once for the cup, were merged and their tier recalculated.", "Counts were updated on October 31, 2026 from Wikipedia's lists of winners. Only trophies already recorded in those lists are counted."],
@@ -149,6 +149,11 @@ def flag(ct):
 
 def badge(t, tier):
     return f'<span class="tier t-{tier}">{t["tiers"][tier]}</span>'
+
+
+def pct(v, lang):
+    s = f"{v:.1f}%"
+    return s.replace(".", ",") if lang == "pt" else s
 
 
 def fan(c):
@@ -294,6 +299,8 @@ def row(t, lang, c, base, world=True, n=None, cols=None, fans=False):
     nums = "".join(f'<td class="num" data-l="{e(shy(l))}">{fmt(c[k])}</td>' for k, l in zip(FIELDS, cols))
     data = f'data-rank="{c["rank"]}" data-ct="{ct["id"]}" data-tier="{c["tier"]}" data-q="{e((c["name"] + " " + ct["pt"] + " " + ct["en"]).lower())}" data-total="{c["total"]}"' + "".join(f' data-{k}="{c[k]}"' for k in FIELDS) + f' data-name="{e(c["name"])}"'
     fan_txt = fan(c).replace(".", ",") if lang == "pt" else fan(c)
+    if c.get("fans"):
+        fan_txt = '<span class="fan2">' + "".join(f"<span>{s} <b>{pct(v, lang)}</b></span>" for s, v in zip(("Ipsos-Ipec", "AtlasIntel"), c["fans"]) if v is not None) + "</span>"
     fan_td = f'<td class="num fan" data-l="{t["col_fan"]}">{fan_txt or "<span class=\"z\">–</span>"}</td>' if fans else ""
     return f'<tr {data}><td class="pos">{n or c["rank"]}</td><td class="club"><strong>{e(c["name"])}</strong>{sub}</td><td class="tc">{badge(t, c["tier"])}</td>{nums}<td class="num tot" data-l="{t["col_total"]}">{c["total"]}</td>{fan_td}</tr>'
 
@@ -400,7 +407,7 @@ def country(lang, i, ct, order):
     top = ct["clubs"][0]
     n_c = len(ct["clubs"])
     intro = (t["intro_one"] if n_c == 1 else t["intro_many"]).format(n=n_c, c=in_country(lang, ct).replace("in ", "") if lang == "en" else in_country(lang, ct)) + " " + t["intro_top"].format(x=e(top["name"]), r=top["rank"], s=top["total"])
-    note = f'<p class="muted note">{t["fan_note"]}</p>' if fans else ""
+    note = f'<p class="muted note">{t["fan_note_br" if ct["id"] == "br" else "fan_note"]}</p>' if fans else ""
     h1 = t["ct_h1"].format(c=in_country(lang, ct))
     body = f'''<main class="wrap page" id="conteudo">
   <a class="crumb" href="{home_u}#paises">{ICO["back"]}{t["back"]}</a>
@@ -420,6 +427,10 @@ def country(lang, i, ct, order):
     page(lang, "ct", ct, title, t["ct_desc"].format(c=in_country(lang, ct), n=n_c), body, nodes)
 
 
+FAN_REFS = [("Ipsos-Ipec / O Globo", "www.cnnbrasil.com.br/esportes/futebol/pesquisa-revela-ranking-das-maiores-torcidas-do-brasil-em-2025-veja/"),
+            ("AtlasIntel / ge", "www.itatiaia.com.br/esportes/futebol/futebol-nacional/nova-pesquisa-aponta-maiores-torcidas-do-brasil-em-2025-veja-ranking/")]
+
+
 def ref_url(u):
     u = u.strip().split(" / ")[0].replace("https://", "")
     if u.startswith("wikipedia.org"):
@@ -434,6 +445,9 @@ def ref_links(ct, t):
         if u:
             for part in u.split(" / "):
                 out += f'<li><span>{l}</span> <a href="{e(ref_url(part))}" target="_blank" rel="noopener">{e(part.strip().replace("https://", ""))}</a></li>'
+    if ct["id"] == "br":
+        for name, u in FAN_REFS:
+            out += f'<li><span>{t["col_fan"]}</span> <a href="https://{u}" target="_blank" rel="noopener">{name}</a></li>'
     return out
 
 
