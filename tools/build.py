@@ -8,6 +8,8 @@ ROOT = Path(__file__).parent.parent
 SITE = "https://biggestclubs.biblioverse.org/"
 VER = "2026-10-31-r7"
 UPDATED = "2026-10-31"
+CF_TOKEN = '1c9e4bc747a54ee391a2340dd39a858a'
+CF_SNIPPET = f'''<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{{"token": "{CF_TOKEN}"}}'></script><!-- End Cloudflare Web Analytics -->'''
 COUNTRIES, CLUBS, _ = load()
 
 T = {
@@ -236,7 +238,7 @@ def page(lang, key, s_key, title, desc, body, nodes=(), cur=""):
 <link rel="stylesheet" href="{base}assets/styles.css?v={VER}">
 </head>
 <body>
-<nav id="bvbar" class="bvbar" data-current="biggestclubs" data-offset="none" aria-label="BiblioVerse" style="position:relative;height:44px;z-index:9000;background:linear-gradient(90deg,#4f7cff,#7a5cff)"><a href="https://biblioverse.org" style="color:#fff;line-height:44px;padding:0 14px;font-weight:700;text-decoration:none;font-family:sans-serif">BiblioVerse</a></nav>
+<nav id="bvbar" class="bvbar" data-current="biggestclubs" data-offset="none" aria-label="BiblioVerse" style="position:relative;height:36px;z-index:9000;background:linear-gradient(90deg,#4f7cff,#7a5cff)"><a href="https://biblioverse.org" style="color:#fff;line-height:36px;padding:0 14px;font-weight:700;text-decoration:none;font-family:sans-serif">BiblioVerse</a></nav>
 <a class="skip" href="#conteudo">{t["skip"]}</a>
 <header class="topbar wrap">
   <a class="logo" href="{home}" aria-label="{e(t["site"])}">{LOGO}<span>{t["short"]}</span></a>
@@ -259,6 +261,7 @@ def page(lang, key, s_key, title, desc, body, nodes=(), cur=""):
   <p class="credit">{t["foot_by"]} <a href="https://linkedin.com/in/juliocesarprava" target="_blank" rel="noopener author">Julio Cesar Prava</a>. {t["foot_special"]} <a href="https://biblioverse.org" target="_blank" rel="noopener">BiblioVerse</a>.</p>
 </footer>
 <script src="{base}assets/app.js?v={VER}"></script>
+{CF_SNIPPET}
 </body>
 </html>
 '''
@@ -506,7 +509,7 @@ def extras():
     (ROOT / "404.html").write_text(f'''<!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{t["nf_title"]} · {t["short"]}</title><meta name="robots" content="noindex">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/assets/styles.css?v={VER}"></head>
-<body><main class="wrap nf"><h1>404</h1><p class="lead">{t["nf_p"]}<br>{en["nf_p"]}</p><p><a class="go" href="/">{t["nf_cta"]}</a> <a class="go" href="/en/">{en["nf_cta"]}</a></p></main></body></html>
+<body><main class="wrap nf"><h1>404</h1><p class="lead">{t["nf_p"]}<br>{en["nf_p"]}</p><p><a class="go" href="/">{t["nf_cta"]}</a> <a class="go" href="/en/">{en["nf_cta"]}</a></p></main>{CF_SNIPPET}</body></html>
 ''', encoding="utf-8", newline="\n")
 
 
